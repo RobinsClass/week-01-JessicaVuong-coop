@@ -42,72 +42,102 @@ import maya.cmds as cmds
 cmds.file(new=True, force=True)
 
 # ---------------------------------------------------------------------------
-# Ground Plane
+# Creating ground Plane
 # ---------------------------------------------------------------------------
-# Descriptive variables for the ground plane dimensions and position.
-ground_width = 50
-ground_depth = 50
-ground_y_position = 0
-
-ground = cmds.polyPlane(
-    name="ground_plane",
-    width=ground_width,
-    height=ground_depth,
-    subdivisionsX=1,
-    subdivisionsY=1,
-)[0]
-cmds.move(0, ground_y_position, 0, ground)
-
+ground_width = 30
+ground_height = 30
+cmds.polyPlane (name="ground", width=ground_width, height=ground_height)
 # ---------------------------------------------------------------------------
-# Example Object 1 -- a simple building (cube)
-# This is provided as an example. Study it, then add your own objects below.
+# Creating and assigning shader for ground
 # ---------------------------------------------------------------------------
-building_width = 4
-building_height = 6
-building_depth = 4
-building_x = -8
-building_z = 5
-
-building = cmds.polyCube(
-    name="building_01",
-    width=building_width,
-    height=building_height,
-    depth=building_depth,
-)[0]
-# Raise the building so its base sits on the ground plane.
-cmds.move(building_x, building_height / 2.0, building_z, building)
-
+ground_shader = cmds.shadingNode("lambert", asShader=True, name="groundMat")
+cmds.setAttr(ground_shader+".color", 0.2, 0.25, 0.1, type="double3")
+cmds.select("ground")
+cmds.hyperShade(assign=ground_shader)
 # ---------------------------------------------------------------------------
-# TODO: Add Object 2
-# Create a second object using a DIFFERENT primitive type than the cube above.
-# Remember to:
-#   - Use descriptive variable names for size and position.
-#   - Name the object meaningfully with the 'name' parameter or cmds.rename().
-#   - Position it so it sits on the ground (not floating or buried).
+# Creating house 1 
 # ---------------------------------------------------------------------------
-
-
+house_1_width = 12
+house_1_height = 5
+house_1_depth = 3
+cmds.polyCube (name="house_1", width=house_1_width, height=house_1_height, depth=house_1_depth)
+cmds.move(0, house_1_height/2, -house_1_height, "house_1")
 # ---------------------------------------------------------------------------
-# TODO: Add Object 3
+#Creating house 2
 # ---------------------------------------------------------------------------
-
-
+house_2_width = 5
+house_2_height = 3
+house_2_depth = 3
+cmds.polyCube (name="house_2", width=house_2_width, height=house_2_height, depth=house_2_depth)
+cmds.move(5, house_2_height/2, 2, "house_2")
+cmds.rotate(0, 45, 0, "house_2");
 # ---------------------------------------------------------------------------
-# TODO: Add Object 4
+#Creating house 2
 # ---------------------------------------------------------------------------
-
-
+house_3_width = 7
+house_3_height = 3
+house_3_depth = 3
+cmds.polyCube (name="house_3", width=house_3_width, height=house_3_height, depth=house_3_depth)
+cmds.move(-5, house_3_height/2, 3, "house_3")
+cmds.rotate(0, 90, 0, "house_3")
 # ---------------------------------------------------------------------------
-# TODO: Add Object 5
+# Creating and assigning shader for house 1 and 3
 # ---------------------------------------------------------------------------
-
+house_1_3_shader = cmds.shadingNode("lambert", asShader=True, name="house_1_3Mat")
+cmds.setAttr(house_1_3_shader+".color", 0.5, 0.2, 0.1, type="double3")
+for house1_3 in ["house_1", "house_3"]:
+    cmds.select(house1_3)
+    cmds.hyperShade(assign=house_1_3_shader)
+# ---------------------------------------------------------------------------
+# Creating and assigning shader for house 2
+# ---------------------------------------------------------------------------
+house_2_shader = cmds.shadingNode("lambert", asShader=True, name="house_2Mat")
+cmds.setAttr (house_2_shader+".color", 0.2, 0.1, 0, type="double3")
+cmds.select("house_2")
+cmds.hyperShade(assign=house_2_shader)
 
 # ---------------------------------------------------------------------------
-# TODO (Optional): Add more objects to make your scene more interesting!
-# Consider: trees, lamp posts, fences, vehicles, animals, etc.
+# Creating tree trunk and leaf for tree 1
 # ---------------------------------------------------------------------------
+tree_trunk_1_radius=0.25
+tree_trunk_1_height=2
+tree_trunk_1_position_x=8
+tree_trunk_1_position_z=-3
+tree_trunk_1_position_y=tree_trunk_1_height/2
+cmds.polyCylinder (name="tree_trunk_1", radius=tree_trunk_1_radius, height=tree_trunk_1_height)
+cmds. move(tree_trunk_1_position_x, tree_trunk_1_position_y, tree_trunk_1_position_z, "tree_trunk_1")
 
+tree_leaf_1_radius=1
+cmds.polySphere (name="tree_leaf_1", radius=tree_leaf_1_radius)
+cmds. move (tree_trunk_1_position_x, 3, tree_trunk_1_position_z, "tree_leaf_1")
+# ---------------------------------------------------------------------------
+# Creating tree trunk and leaf for tree 2
+# ---------------------------------------------------------------------------
+tree_trunk_2_radius=0.3
+tree_trunk_2_height=2.25
+tree_trunk_2_position_x=-8
+tree_trunk_2_position_y=tree_trunk_2_height/2
+tree_trunk_2_position_z=-5
+cmds.polyCylinder (name="tree_trunk_2", radius=tree_trunk_2_radius, height=tree_trunk_2_height)
+cmds. move(tree_trunk_2_position_x, tree_trunk_2_position_y, tree_trunk_2_position_z, "tree_trunk_2")
 
+tree_leaf_2_radius=1.5
+cmds.polySphere (name="tree_leaf_2", radius=tree_leaf_2_radius)
+cmds. move (tree_trunk_2_position_x, 3.5, tree_trunk_2_position_z, "tree_leaf_2")
+# ---------------------------------------------------------------------------
+# Creating and assigning materials for trees
+# ---------------------------------------------------------------------------
+tree_leaf_shader = cmds.shadingNode("lambert", asShader=True, name="tree_leafMat")
+cmds.setAttr (tree_leaf_shader+".color", 0, 0.4, 0, type="double3")
+for tree_leaf in ["tree_leaf_1", "tree_leaf_2"]:
+    cmds.select (tree_leaf)
+    cmds.hyperShade (assign=tree_leaf_shader)
+
+tree_trunk_shader = cmds.shadingNode("lambert", asShader=True, name="tree_trunkMat")
+cmds.setAttr (tree_trunk_shader+".color", 0.1, 0.07, 0.01, type="double3")
+for tree_trunk in ["tree_trunk_1", "tree_trunk_2"]:
+    cmds.select (tree_trunk)
+    cmds.hyperShade (assign=tree_trunk_shader)
 # ---------------------------------------------------------------------------
 # Frame All -- so the whole scene is visible in the viewport.
 # (This is provided for you -- do not remove.)
